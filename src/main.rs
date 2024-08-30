@@ -26,6 +26,9 @@ fn main() {
     loop {
         let mut rng = rand::thread_rng();
         let random_duration = rng.gen_range(1..=10);
+
+
+
         let random_duration = random_duration as f64 / 10.0;
         let target_duration = Duration::from_millis((random_duration * 1000.0) as u64);
         let start_time = Instant::now(); //<- the moment in time this was executed
@@ -33,6 +36,7 @@ fn main() {
             let elapsed = start_time.elapsed(); //<- get amount of time since called instant::now()
             if elapsed >= target_duration {
                 play_wave();
+                break;
             }
         }
     }
@@ -40,13 +44,13 @@ fn main() {
 
 fn play_wave() {
     // Parameters for the square wave
-    let amplitude = 1.0;     // Amplitude of the square wave
+    let amplitude = 0.05;     // Amplitude of the square wave
     let duration = 1.0;      // Duration in seconds
 
     let mut rng = rand::thread_rng();
     let duration: f32 = duration / rng.gen_range(1..10) as f32;
     let frequency = rng.gen_range(8000..14000);
-    let sample_rate = rng.gen_range(40000..44100);
+    let sample_rate = rng.gen_range(30000..35000);
     println!("beep: {frequency}, {duration}, {amplitude}, {sample_rate}");
 
     // Set up the audio stream
