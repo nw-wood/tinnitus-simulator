@@ -1,5 +1,6 @@
 extern crate rodio;
 
+use std::thread;
 use rodio::{OutputStream, Source};
 use std::time::{Duration, Instant};
 use rand::Rng;
@@ -25,7 +26,7 @@ impl SquareWave {
 fn main() {
     loop {
         let mut rng = rand::thread_rng();
-        let random_duration = rng.gen_range(1..=10);
+        let random_duration = rng.gen_range(1..=5);
 
 
 
@@ -35,7 +36,7 @@ fn main() {
         loop {
             let elapsed = start_time.elapsed(); //<- get amount of time since called instant::now()
             if elapsed >= target_duration {
-                play_wave();
+                thread::spawn(|| play_wave());
                 break;
             }
         }
@@ -44,7 +45,7 @@ fn main() {
 
 fn play_wave() {
     // Parameters for the square wave
-    let amplitude = 0.05;     // Amplitude of the square wave
+    let amplitude = 0.2;     // Amplitude of the square wave
     let duration = 1.0;      // Duration in seconds
 
     let mut rng = rand::thread_rng();
