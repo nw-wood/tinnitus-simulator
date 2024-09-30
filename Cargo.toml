@@ -1,9 +1,8 @@
 [package]
-name = "anxiety-destroying-audio-producing-technology"
+name = "tinnitus-simulator"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-rand = "0.8.5"
 rodio = "0.19.0"
-hound = "3.5.1"
+rand = "0.8.5"
