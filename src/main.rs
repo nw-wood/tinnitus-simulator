@@ -5,8 +5,6 @@ use std::thread;
 
 const AMPLITUDE: f64 = 1.0;
 const AMPLITUDE_RANDOM_OFFSET_MAX: f64 = 0.25;
-/*const DURATION: f64 = 1.0;
-const DURATION_RANDOM_OFFSET_MAX: f64 = 0.25;*/
 const FREQUENCY_MIN: u32 = 12000;
 const FREQUENCY_MAX: u32 = 15000;
 const SAMPLE_RATE: u32 = 44100;
