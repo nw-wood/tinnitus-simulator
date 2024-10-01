@@ -1,8 +1,8 @@
 ### Tinnitus Sound Simulator
 
-This program is designed to mask high-frequency pulsing sounds associated with tinnitus by generating randomized sound waves across multiple frequency ranges.
-It operates with two parallel threads, each producing distinct frequencies, layered over one another.
-The randomness and overlapping nature of these sounds effectively blend with the hyper-pulsing tinnitus, making the intrusive tones indiscernible.
+This program is designed to mask high-frequency pulsing sounds associated with tinnitus, CRT's, mosquito generator apps, and long/short range LRAD and microwave abuse by generating randomized sound waves across multiple frequencies in or around the ranges the listed annoyances can produce.
+
+The randomn nature of this sound effectively blends with the hyper-pulsing 'tinnitus', making the intrusive tones indiscernible.
 
 Take great-wave.wav into Audacity or some other program to work with it further. There's lots of audio popping which is intended for me in some cases. Additionally, I find it most effective to layer two of these generations on top of each other with one played in reverse.
 
