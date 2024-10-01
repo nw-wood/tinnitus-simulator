@@ -4,6 +4,8 @@ This program is designed to mask high-frequency pulsing sounds associated with t
 It operates with two parallel threads, each producing distinct frequencies, layered over one another.
 The randomness and overlapping nature of these sounds effectively blend with the hyper-pulsing tinnitus, making the intrusive tones indiscernible.
 
+Take great-wave.wav into Audacity or some other program to work with it further. There's lots of audio popping which is intended for me in some cases. Additionally, I find it most effective to layer two of these generations on top of each other with one played in reverse.
+
 ### Note: Adjust volume carefully, as the output is intense by design and may require lower levels for comfort. Use at your own risk.
 
 ```rust
