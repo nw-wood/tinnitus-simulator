@@ -3,7 +3,7 @@
 This program is designed to mask high-frequency pulsing sounds associated with tinnitus by generating randomized sound waves across multiple frequency ranges.
 The random nature of this sound effectively blends with the hyper-pulsing tinnitus, making the intrusive tones indiscernible.
 
-UHF, VHF, Low freq powered RFID crap, LRAD's, tinnitus, whatever - this will obscure it.
+UHF, VHF, Low freq powered RFID crap, LRAD's, tinnitus, whatever - this will obscure it. CRT's too f*** those things. Mosquito cell phone apps. Screw em'.
 
 Take great-wave.wav into Audacity or some other program to work with it further. There's lots of audio popping which is intended (for me personally) in some cases.
 
