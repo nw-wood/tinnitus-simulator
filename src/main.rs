@@ -1,31 +1,8 @@
-use std::f32::consts::PI;
-use std::i16;
-use hound;
-
-
-fn main() {
-    let spec = hound::WavSpec {
-        channels: 1,
-        sample_rate: 44100,
-        bits_per_sample: 16,
-        sample_format: hound::SampleFormat::Int,
-    };
-    let mut writer = hound::WavWriter::create("sine.wav", spec).unwrap();
-    for t in (0 .. 44100).map(|x| x as f32 / 44100.0) {
-        let sample = (t * 5000.0 * 2.0 * PI).sin();
-        let amplitude = i16::MAX as f32;
-        writer.write_sample((sample * amplitude) as i16).unwrap();
-    }
-    writer.finalize().unwrap();
-}
-
-
-
-/*use rand::Rng;
+use rand::Rng;
 use rodio::{OutputStream, Sink, Source};
 use std::time::Duration;
 use std::thread;
-//use hound;
+use hound;
 
 const AMPLITUDE: f64 = 1.0;
 const AMPLITUDE_RANDOM_OFFSET_MAX: f64 = 0.25;
@@ -87,45 +64,49 @@ impl Source for SquareWave {
 
 fn run_wave_generation(name: &str) {
 
-    /*let spec = hound::WavSpec {
+    let spec = hound::WavSpec {
         channels: 1,
-        sample_rate: SAMPLE_RATE,
-        bits_per_sample: 32,
-        sample_format: hound::SampleFormat::Float,
-    };*/
+        sample_rate: 44100,
+        bits_per_sample: 16,
+        sample_format: hound::SampleFormat::Int,
+    };
 
     //let some_int = rand::thread_rng().gen_range(10000..99999);
-    //let mut writer = hound::WavWriter::create(format!("tinnitus-simulator-{}.wav", some_int), spec).unwrap();
 
-    loop {
-        let mut rng_generator = rand::thread_rng();
-        let amplitude: f64 = AMPLITUDE + AMPLITUDE_RANDOM_OFFSET_MAX - rng_generator.gen_range(0.0..AMPLITUDE_RANDOM_OFFSET_MAX) * 2.0;
+    let mut writer = hound::WavWriter::create("whack-wave.wav", spec).unwrap();
 
-        let millis = rng_generator.gen_range(100..500);
-        let duration= Duration::from_millis(millis);
+    let mut rng_generator = rand::thread_rng();
+    let amplitude: f64 = AMPLITUDE + AMPLITUDE_RANDOM_OFFSET_MAX - rng_generator.gen_range(0.0..AMPLITUDE_RANDOM_OFFSET_MAX) * 2.0;
 
-        let frequency: u32 = rng_generator.gen_range(FREQUENCY_MIN..FREQUENCY_MAX);
-        let sample_rate = SAMPLE_RATE - rng_generator.gen_range(0..SAMPLE_RATE_RANDOM_SUB_MAX);
+    let millis = rng_generator.gen_range(100..500);
+    let duration= Duration::from_millis(millis);
 
-        let (_stream, stream_handle) = OutputStream::try_default().unwrap();
-        let sink = Sink::try_new(&stream_handle).unwrap();
+    let frequency: u32 = rng_generator.gen_range(FREQUENCY_MIN..FREQUENCY_MAX);
+    let sample_rate = SAMPLE_RATE - rng_generator.gen_range(0..SAMPLE_RATE_RANDOM_SUB_MAX);
 
-        let wave = SquareWave::new(frequency, sample_rate, amplitude as f32)
-            .take_duration(duration);
+    let (_stream, stream_handle) = OutputStream::try_default().unwrap();
+    let sink = Sink::try_new(&stream_handle).unwrap();
 
-        println!("thread:{}/dir{}/amp{}/sr{}/freq{}", name, millis, amplitude.to_string().split_at(5).0, sample_rate, frequency);
+    let wave = SquareWave::new(frequency, sample_rate, amplitude as f32)
+        .take_duration(duration);
 
-        /*for sample in wave.clone().convert_samples::<i16>() {
-            writer.write_sample(sample).unwrap();
-        }*/
-        sink.append(wave);
-        sink.sleep_until_end();
+    println!("thread:{}/dir{}/amp{}/sr{}/freq{}", name, millis, amplitude.to_string().split_at(5).0, sample_rate, frequency);
+
+    for sample in wave.clone().convert_samples::<i16>() {
+        writer.write_sample(sample).unwrap();
     }
+
+    //wave.convert_samples()
+    sink.append(wave);
+    sink.sleep_until_end();
+
 }
 
 fn main() {
 
-    println!("running interference!");
+    run_wave_generation("whack-wave");
+    
+    /*println!("running interference!");
 
     let thread1 = thread::spawn(|| {
         run_wave_generation("a");
@@ -136,7 +117,5 @@ fn main() {
     });
 
     thread1.join().unwrap();
-    thread2.join().unwrap();
+    thread2.join().unwrap();*/
 }
-*/
-
