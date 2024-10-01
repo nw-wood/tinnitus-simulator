@@ -2,6 +2,7 @@ use rand::Rng;
 use rodio::{OutputStream, Sink, Source};
 use std::time::Duration;
 use std::thread;
+//use hound;
 
 const AMPLITUDE: f64 = 1.0;
 const AMPLITUDE_RANDOM_OFFSET_MAX: f64 = 0.25;
@@ -10,6 +11,7 @@ const FREQUENCY_MAX: u32 = 15000;
 const SAMPLE_RATE: u32 = 44100;
 const SAMPLE_RATE_RANDOM_SUB_MAX: u32 = 1000;
 
+#[derive(Clone)]
 struct SquareWave {
     freq: u32,
     sample_rate: u32,
@@ -61,6 +63,17 @@ impl Source for SquareWave {
 }
 
 fn run_wave_generation(name: &str) {
+
+    /*let spec = hound::WavSpec {
+        channels: 1,
+        sample_rate: SAMPLE_RATE,
+        bits_per_sample: 32,
+        sample_format: hound::SampleFormat::Float,
+    };*/
+
+    //let some_int = rand::thread_rng().gen_range(10000..99999);
+    //let mut writer = hound::WavWriter::create(format!("tinnitus-simulator-{}.wav", some_int), spec).unwrap();
+
     loop {
         let mut rng_generator = rand::thread_rng();
         let amplitude: f64 = AMPLITUDE + AMPLITUDE_RANDOM_OFFSET_MAX - rng_generator.gen_range(0.0..AMPLITUDE_RANDOM_OFFSET_MAX) * 2.0;
@@ -77,8 +90,11 @@ fn run_wave_generation(name: &str) {
         let wave = SquareWave::new(frequency, sample_rate, amplitude as f32)
             .take_duration(duration);
 
-        println!("interference {}; dur: {}, amp: {}, sr: {}, freq: {}", name, millis, amplitude.to_string().split_at(5).0, sample_rate, frequency);
+        println!("thread:{}/dir{}/amp{}/sr{}/freq{}", name, millis, amplitude.to_string().split_at(5).0, sample_rate, frequency);
 
+        /*for sample in wave.clone().convert_samples::<i16>() {
+            writer.write_sample(sample).unwrap();
+        }*/
         sink.append(wave);
         sink.sleep_until_end();
     }
@@ -89,11 +105,11 @@ fn main() {
     println!("running interference!");
 
     let thread1 = thread::spawn(|| {
-        run_wave_generation("thread 1");
+        run_wave_generation("a");
     });
 
     let thread2 = thread::spawn(|| {
-        run_wave_generation("thread 2");
+        run_wave_generation("b");
     });
 
     thread1.join().unwrap();

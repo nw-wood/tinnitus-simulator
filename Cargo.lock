@@ -728,6 +728,7 @@ dependencies = [
 name = "tinnitus-simulator"
 version = "0.1.0"
 dependencies = [
+ "hound",
  "rand",
  "rodio",
 ]
