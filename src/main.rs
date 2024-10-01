@@ -72,40 +72,47 @@ fn run_wave_generation(name: &str) {
     };
 
     //let some_int = rand::thread_rng().gen_range(10000..99999);
-
-    let mut writer = hound::WavWriter::create("whack-wave.wav", spec).unwrap();
-
+    let mut writer = hound::WavWriter::create(format!("{name}.wav"), spec).unwrap();
     let mut rng_generator = rand::thread_rng();
-    let amplitude: f64 = AMPLITUDE + AMPLITUDE_RANDOM_OFFSET_MAX - rng_generator.gen_range(0.0..AMPLITUDE_RANDOM_OFFSET_MAX) * 2.0;
-
-    let millis = rng_generator.gen_range(100..500);
-    let duration= Duration::from_millis(millis);
-
-    let frequency: u32 = rng_generator.gen_range(FREQUENCY_MIN..FREQUENCY_MAX);
-    let sample_rate = SAMPLE_RATE - rng_generator.gen_range(0..SAMPLE_RATE_RANDOM_SUB_MAX);
 
     let (_stream, stream_handle) = OutputStream::try_default().unwrap();
     let sink = Sink::try_new(&stream_handle).unwrap();
 
-    let wave = SquareWave::new(frequency, sample_rate, amplitude as f32)
-        .take_duration(duration);
+    for current_iter in 0..500 {
+        
+        let amplitude: f64 = AMPLITUDE + AMPLITUDE_RANDOM_OFFSET_MAX - rng_generator.gen_range(0.0..AMPLITUDE_RANDOM_OFFSET_MAX) * 2.0;
+        let millis = rng_generator.gen_range(10..400);
+        let duration= Duration::from_millis(millis);
+        let frequency: u32 = rng_generator.gen_range(FREQUENCY_MIN..FREQUENCY_MAX);
+        let sample_rate = SAMPLE_RATE - rng_generator.gen_range(0..SAMPLE_RATE_RANDOM_SUB_MAX);
 
-    println!("thread:{}/dir{}/amp{}/sr{}/freq{}", name, millis, amplitude.to_string().split_at(5).0, sample_rate, frequency);
 
-    for sample in wave.clone().convert_samples::<i16>() {
-        writer.write_sample(sample).unwrap();
+
+        let wave = SquareWave::new(frequency, sample_rate, amplitude as f32).take_duration(duration);
+
+        println!("{}: generated sample #: {current_iter} -> dir: {}, amp: {}, sr: {}, freq: {}", name, millis, amplitude.to_string().split_at(5).0, sample_rate, frequency);
+
+        writer.write_sample(0 as i16).unwrap();
+
+        for sample in wave.clone().convert_samples::<i16>() {
+            writer.write_sample(sample).unwrap();
+        }
+
+        //writer.write_sample(0 as i16).unwrap();
+        sink.append(wave);
+        sink.sleep_until_end();
     }
 
-    //wave.convert_samples()
-    sink.append(wave);
-    sink.sleep_until_end();
+    writer.finalize().unwrap();
+
+    println!("generation finished, check working dir");
 
 }
 
 fn main() {
 
     run_wave_generation("whack-wave");
-    
+
     /*println!("running interference!");
 
     let thread1 = thread::spawn(|| {
