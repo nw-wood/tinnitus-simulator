@@ -1,7 +1,7 @@
 ### Tinnitus Sound Simulator
 
 This program is designed to mask high-frequency pulsing sounds associated with tinnitus by generating randomized sound waves across multiple frequency ranges.
-The random nature of this sound effectively blends with the hyper-pulsing tinnitus, making the intrusive tones indiscernible.
+The random nature of this sound effectively blends with these sharp pulses and makes the intrusive tones indiscernible.
 
 UHF, VHF, Low freq powered RFID crap, LRAD's, tinnitus, whatever - this will obscure it. CRT's too f*** those things. Mosquito cell phone apps. Screw em'.
 
