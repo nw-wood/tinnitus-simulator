@@ -3,19 +3,19 @@ use rodio::{OutputStream, Sink, Source};
 use std::time::Duration;
 use hound;
 
-const AMPLITUDE: f64 = 1.0;
-const AMPLITUDE_RANDOM_OFFSET_MAX: f64 = 0.25;
+const AMPLITUDE: f64 = 0.9;
+const AMPLITUDE_RANDOM_OFFSET_MAX: f64 = 0.1;
 const FREQUENCY_MIN: u32 = 12000;
-const FREQUENCY_MAX: u32 = 15000;
+const FREQUENCY_MAX: u32 = 15500;
 const SAMPLE_RATE: u32 = 44100;
-const SAMPLE_RATE_RANDOM_SUB_MAX: u32 = 1000;
+const SAMPLE_RATE_RANDOM_SUB_MAX: u32 = 1; //don't do this
 const BITS_PER_SAMPLE: u16 = 16;
 const CHANNELS: u16 = 1;
-const TOTAL_SAMPLES: u32 = 10;
+const TOTAL_SAMPLES: u32 = 250;
 const MAX_SUSTAIN_PER_SAMPLE: u64 = 500;
 const MIN_SUSTAIN_PER_SAMPLE: u64 = 100;
 const WAV_NAME: &str = "great-wav";
-const FADE_MS: f32 = 50.0;  // 0.05ms fade time
+const FADE_MS: f32 = 50.0; //higher will result in clipping
 
 #[derive(Clone)]
 struct SquareWave {
