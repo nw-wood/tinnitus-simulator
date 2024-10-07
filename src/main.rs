@@ -3,19 +3,20 @@ use rodio::{OutputStream, Sink, Source};
 use std::{thread, time::Duration};
 use hound;
 
-const AMPLITUDE: f64 = 0.9;
-const AMPLITUDE_RANDOM_OFFSET_MAX: f64 = 0.1;
-const FREQUENCY_MIN: u32 = 12000;
-const FREQUENCY_MAX: u32 = 15500;
-const SAMPLE_RATE: u32 = 44100;
-const SAMPLE_RATE_RANDOM_SUB_MAX: u32 = 1; //don't do this
-const BITS_PER_SAMPLE: u16 = 16;
-const CHANNELS: u16 = 1;
-const TOTAL_SAMPLES: u32 = 100;
-const MAX_SUSTAIN_PER_SAMPLE: u64 = 200;
-const MIN_SUSTAIN_PER_SAMPLE: u64 = 40;
-const WAV_NAME: &str = "great-wav";
-const FADE_MS: f32 = 20.0; //higher will result in clipping
+const AMPLITUDE: f64                    = 0.9;          //wave height target
+const AMPLITUDE_RANDOM_OFFSET_MAX: f64  = 0.1;          //ranomize wave height by some amount
+const FREQUENCY_MIN: u32                = 12000;        //minimum speed of sample oscilation
+const FREQUENCY_MAX: u32                = 15500;        //maximum speed of sample osc
+const SAMPLE_RATE: u32                  = 44100;        //sample rate, 44100 over one second
+const SAMPLE_RATE_RANDOM_SUB_MAX: u32   = 1;            //don't do this, but this can be set higher for sample rate shenans
+const BITS_PER_SAMPLE: u16              = 16;           //power of 16, 32, whatever else hound/rodio is happy with
+const CHANNELS: u16                     = 1;            //2 for stereo
+const TOTAL_SAMPLES: u32                = 100;          //amount of generations to append to the wav
+const MAX_SUSTAIN_PER_SAMPLE: u64       = 200;          //each pulses' duration top end
+const MIN_SUSTAIN_PER_SAMPLE: u64       = 40;           //as shmall as the duration can be
+const WAV_NAME: &str                    = "great-wav";  //name for the file that gets spit out
+const FADE_MS: f32                      = 20.0;         //sine based easing, this should be at most half of the min sustain per sample
+const SAMPLE_DELAY: f64                 = 1.50;         //random delay between each sample generated 0.0-SAMPLE_DELAY
 
 #[derive(Clone)]
 struct SquareWave {
@@ -40,7 +41,7 @@ impl SquareWave {
         }
     }
 
-    //linear fade
+    //linear fade - causes speaker membranes pump like a heart beat almost at these rates
     // fn get_fade_multiplier(&self) -> f32 {
     //     if self.sample_clock < self.fade_samples {
     //         // Fade in
@@ -54,7 +55,7 @@ impl SquareWave {
     //     }
     // }
 
-    //sine based easing
+    //sine based easing - much better, although the math is wrong for the tail end occasionally causing pops, but I like for now
     fn get_fade_multiplier(&self) -> f32 {
         if self.sample_clock < self.fade_samples * 2 {
             // Fade in with sine curve
@@ -126,24 +127,25 @@ fn main() {
         
         let wave = SquareWave::new(frequency, sample_rate, amplitude as f32, duration);
         
-        println!("Generated sample #{}: duration: {}ms, amplitude: {:.3}, sample_rate: {}, frequency: {}Hz", 
-                current_iter, millis, amplitude, sample_rate, frequency);
+        // println!("Generated sample #{}: duration: {}ms, amplitude: {:.3}, sample_rate: {}, frequency: {}Hz", 
+        //         current_iter, millis, amplitude, sample_rate, frequency);
 
         for sample in wave.clone().convert_samples::<i16>() {
             writer.write_sample(sample).unwrap();
         }
 
-        let samples_delay_range: f64 = rng_generator.gen_range(0.0..1.5);
+        let samples_delay_range: f64 = rng_generator.gen_range(0.0..SAMPLE_DELAY);
         let samples_delay_range_b = (samples_delay_range * SAMPLE_RATE as f64).round() as usize;
-        //simulate delay while writing
-        println!("delay: {samples_delay_range}");
         thread::sleep(Duration::from_secs(samples_delay_range as u64));
         for _ in 0..samples_delay_range_b {
             writer.write_sample(0 as i16).unwrap();
         }
 
-        sink.append(wave);
-        sink.sleep_until_end();
+        //Stopped playing samples during generator for speed of output - sample viewing done in audacity (or similar program)
+
+        // sink.append(wave);
+        // sink.sleep_until_end();
+
     }
     
     writer.finalize().unwrap();
