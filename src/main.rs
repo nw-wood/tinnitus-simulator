@@ -1,6 +1,6 @@
 use rand::Rng;
 use rodio::{OutputStream, Sink, Source};
-use std::time::Duration;
+use std::{thread, time::Duration};
 use hound;
 
 const AMPLITUDE: f64 = 0.9;
@@ -11,11 +11,11 @@ const SAMPLE_RATE: u32 = 44100;
 const SAMPLE_RATE_RANDOM_SUB_MAX: u32 = 1; //don't do this
 const BITS_PER_SAMPLE: u16 = 16;
 const CHANNELS: u16 = 1;
-const TOTAL_SAMPLES: u32 = 250;
-const MAX_SUSTAIN_PER_SAMPLE: u64 = 500;
-const MIN_SUSTAIN_PER_SAMPLE: u64 = 100;
+const TOTAL_SAMPLES: u32 = 100;
+const MAX_SUSTAIN_PER_SAMPLE: u64 = 200;
+const MIN_SUSTAIN_PER_SAMPLE: u64 = 40;
 const WAV_NAME: &str = "great-wav";
-const FADE_MS: f32 = 50.0; //higher will result in clipping
+const FADE_MS: f32 = 20.0; //higher will result in clipping
 
 #[derive(Clone)]
 struct SquareWave {
@@ -40,13 +40,30 @@ impl SquareWave {
         }
     }
 
+    //linear fade
+    // fn get_fade_multiplier(&self) -> f32 {
+    //     if self.sample_clock < self.fade_samples {
+    //         // Fade in
+    //         self.sample_clock as f32 / self.fade_samples as f32
+    //     } else if self.sample_clock > self.duration_samples - self.fade_samples {
+    //         // Fade out
+    //         (self.duration_samples - self.sample_clock) as f32 / self.fade_samples as f32
+    //     } else {
+    //         // No fade
+    //         1.0
+    //     }
+    // }
+
+    //sine based easing
     fn get_fade_multiplier(&self) -> f32 {
-        if self.sample_clock < self.fade_samples {
-            // Fade in
-            self.sample_clock as f32 / self.fade_samples as f32
-        } else if self.sample_clock > self.duration_samples - self.fade_samples {
-            // Fade out
-            (self.duration_samples - self.sample_clock) as f32 / self.fade_samples as f32
+        if self.sample_clock < self.fade_samples * 2 {
+            // Fade in with sine curve
+            let progress = self.sample_clock as f32 / self.fade_samples as f32;
+            (1.0 - (std::f32::consts::PI * progress / 2.0).cos()) / 2.0
+        } else if self.sample_clock > (self.duration_samples - self.fade_samples * 2) {
+            // Fade out with sine curve
+            let progress = (self.duration_samples - self.sample_clock) as f32 / self.fade_samples as f32;
+            (1.0 - (std::f32::consts::PI * progress / 2.0).cos()) / 2.0
         } else {
             // No fade
             1.0
@@ -115,7 +132,16 @@ fn main() {
         for sample in wave.clone().convert_samples::<i16>() {
             writer.write_sample(sample).unwrap();
         }
-        
+
+        let samples_delay_range: f64 = rng_generator.gen_range(0.0..1.5);
+        let samples_delay_range_b = (samples_delay_range * SAMPLE_RATE as f64).round() as usize;
+        //simulate delay while writing
+        println!("delay: {samples_delay_range}");
+        thread::sleep(Duration::from_secs(samples_delay_range as u64));
+        for _ in 0..samples_delay_range_b {
+            writer.write_sample(0 as i16).unwrap();
+        }
+
         sink.append(wave);
         sink.sleep_until_end();
     }
