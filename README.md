@@ -7,8 +7,6 @@ Take great-wave.wav into Audacity or some other program to work with it further.
 
 UHF, VHF, Low freq powered RFID crap, LRAD's, tinnitus, whatever - this will obscure it. CRT's too f*** those things. Mosquito cell phone apps. Screw em'.
 
-Take great-wave.wav into Audacity or some other program to work with it further. There's lots of audio popping which is intended (for me personally) in some cases.
-
 ### Note: Adjust volume carefully, as the output is intense by design and may require lower levels for comfort. Use at your own risk.
 
 ```rust
