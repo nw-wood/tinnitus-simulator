@@ -5,8 +5,6 @@ The random nature of this sound effectively blends with these sharp pulses and m
 
 Take great-wave.wav into Audacity or some other program to work with it further.
 
-UHF, VHF, Low freq powered RFID crap, LRAD's, tinnitus, whatever - this will obscure it. CRT's too f*** those things. Mosquito cell phone apps. Screw em'.
-
 ### Note: Adjust volume carefully, as the output is intense by design and may require lower levels for comfort. Use at your own risk.
 
 ```rust
